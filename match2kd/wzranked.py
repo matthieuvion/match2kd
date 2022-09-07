@@ -7,6 +7,19 @@ from random import randint
 from typing import Dict, Literal
 
 
+"""
+Inside:
+--------
+
+Stuff to crawl/parse wzranked.com (unofficial, graphQL-based) API
+We're kindly using it because we find the way it calculates the avg kd for a lobby to be the most relevant & accurate. 
+FYI, avg K/D ratio for a lobby = mean(n players seasonal kills/deaths ratio).
+
+We're not totally mean : for detailed stats about each match we could have also relied on wzranked,
+but instead we will use our own credentials (SSO token) and COD API wrapper ('wzlight') to do so.
+"""
+
+
 class Wzranked:
 
     url = "https://wzranked.hasura.app/v1/graphql"
@@ -61,6 +74,7 @@ class Wzranked:
         return r.json()
 
     def getPlayerMatches(self, uuid: str, session: int):
+        """Get player's sessions given a specified wzranked uuid"""
         query = Wzranked.Queries.PMATCHES.value
         variables = {"f_uuid": uuid, "f_session": session}
         payload = self._buildPayload(query, variables)
@@ -74,6 +88,7 @@ class Wzranked:
         return r.json()
 
     def getPlayerStats(self, uuid: str):
+        """Get player's stats given a specified wzranked uuid"""
         query = Wzranked.Queries.PSTATS.value
         variables = {"f_uuid": uuid}
         payload = self._buildPayload(query, variables)
@@ -87,7 +102,7 @@ class Wzranked:
         return r.json()
 
     def uuidsFromMatchIds(self, matchIds: list[str]):
-        """Get a list of uuids, parsed from a list of matchIds"""
+        """Get a list of wzranked uuids, after crawling a list of matchIds"""
 
         def parse_uuids(match):
             list_players = match["data"]["fmatch"][0]["players"]
@@ -115,7 +130,7 @@ class Wzranked:
         match_type: Literal["resurgence", "battle"],
         n_sessions: int,
     ):
-        """Get a list of uuids, parsed from a list of matchIds"""
+        """Get a list of matchIds, after crawling a list of uuids"""
 
         def parse_matchIds(profile, match_type):
             mtype_convert = {"resurgence": "Resurgence", "battle": "BR"}
@@ -145,7 +160,7 @@ class Wzranked:
                 continue
 
     def parseMatchInfo(self, result: Dict):
-        """Extract Match general info (game type) and avg kd"""
+        """Parse minimal info : game mode and avg kd from a match result"""
 
         schema = {
             "matchidstring": str,

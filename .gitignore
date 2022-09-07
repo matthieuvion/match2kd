@@ -3,3 +3,4 @@ test.py
 test.ipynb
 .ipynb_checkpoints
 __pycache__
+match2kd/data/crawled/
