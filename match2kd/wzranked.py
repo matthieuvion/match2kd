@@ -65,7 +65,7 @@ class Wzranked:
         payload = self._buildPayload(query, variables)
         try:
             r = requests.post(
-                url=self.url, headers=self.headers, data=payload, timeout=2
+                url=self.url, headers=self.headers, data=payload, timeout=4
             )
             r.raise_for_status()
             # note that's only for http error, i.e. when wrong query, wzranked still return an object with "errors" in it
@@ -94,7 +94,7 @@ class Wzranked:
         payload = self._buildPayload(query, variables)
         try:
             r = requests.post(
-                url=self.url, headers=self.headers, data=payload, timeout=2
+                url=self.url, headers=self.headers, data=payload, timeout=4
             )
             r.raise_for_status()
         except HTTPError as err:
@@ -127,23 +127,45 @@ class Wzranked:
     def matchIdsFromUuids(
         self,
         uuids: list[str],
-        match_type: Literal["resurgence", "battle"],
+        mode: Literal["resurgence", "battle"],
+        squad: Literal["solos", "duos", "trios", "quads", "any"],
         n_sessions: int,
     ):
         """Get a list of matchIds, after crawling a list of uuids"""
 
-        def parse_matchIds(profile, match_type):
-            mtype_convert = {"resurgence": "Resurgence", "battle": "BR"}
+        def parse_matchIds(profile, mode, squad):
+            mode_convert = {"resurgence": "Resurgence", "battle": "BR"}
+
             list_matches = profile["data"]["fsessions"][0]["matches"]
-            profile_matchIds = [
-                match["matchidstring"]
+            matchIds_all = [
+                {
+                    "matchidstring": match["matchidstring"],
+                    "mode": match["mode"],
+                    "squad": match["squad"],
+                }
                 for match in list_matches
-                if match["mode"] == mtype_convert[match_type]
             ]
-            return profile_matchIds
+            matchIds_mode = [
+                {
+                    "matchidstring": match["matchidstring"],
+                    "squad": match["squad"],
+                }
+                for match in matchIds_all
+                if match["mode"] == mode_convert[mode]
+            ]
+            if squad == "any":
+                return [match["matchidstring"] for match in matchIds_mode]
+            else:
+                return [
+                    match["matchidstring"]
+                    for match in matchIds_mode
+                    if match["squad"] == str.capitalize(squad)
+                ]
 
         for idx, uuid in enumerate(uuids):
-            print(f"getting matchIds from profile {uuid} ({idx+1}/{len(uuids)})")
+            print(
+                f"getting matchIds from profile (/sessions) {uuid} ({idx+1}/{len(uuids)})"
+            )
             time.sleep(randint(1, 3))
             try:
                 for idx_session in range(n_sessions):
@@ -151,7 +173,7 @@ class Wzranked:
                     time.sleep(randint(1, 2))
                     try:
                         profile = self.getPlayerMatches(uuid, idx_session)
-                        matchIds = parse_matchIds(profile, match_type)
+                        matchIds = parse_matchIds(profile, mode, squad)
                         self.matchIds.extend(matchIds)
                         self.matchIds = list(set(self.matchIds))
                     except:

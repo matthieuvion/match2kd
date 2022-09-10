@@ -1,6 +1,8 @@
 example.py
 test.py
 test.ipynb
+playground.ipynb
 .ipynb_checkpoints
 __pycache__
 match2kd/data/crawled/
+.env
