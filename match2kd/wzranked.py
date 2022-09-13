@@ -11,12 +11,18 @@ from typing import Dict, Literal
 Inside:
 --------
 
-Stuff to crawl/parse wzranked.com (unofficial, graphQL-based) API
++ Stuff to crawl/parse wzranked.com (unofficial, graphQL-based) API :
+
+- method to obtain a list players (wzranked) uuids, given a list of matches ids
+- method to obtain a list if matches ids, given a list of players uuids
+- with a few iterations, allow us to collect enough matches ids to get avg k/d ratio from
+- method to collect games's avg player k/d from that given list of matches ids
+
 We're kindly using it because we find the way it calculates the avg kd for a lobby to be the most relevant & accurate. 
 FYI, avg K/D ratio for a lobby = mean(n players seasonal kills/deaths ratio).
 
 We're not totally mean : for detailed stats about each match we could have also relied on wzranked,
-but instead we will use our own credentials (SSO token) and COD API wrapper ('wzlight') to do so.
+but instead we will use our own credentials (SSO token) and handmade COD API wrapper ('wzlight') to do so.
 """
 
 
@@ -182,7 +188,7 @@ class Wzranked:
                 continue
 
     def parseMatchInfo(self, result: Dict):
-        """Parse minimal info : game mode and avg kd from a match result"""
+        """Parse minimal match info : game mode and avg kd from a match result"""
 
         schema = {
             "matchidstring": str,

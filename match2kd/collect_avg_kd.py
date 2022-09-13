@@ -10,6 +10,15 @@ import time
 from match2kd import Wzranked
 
 
+"""
+Inside:
+-------
+
+Collect detailed match stats for a list of match ids, 
+using match2kd/wzranked.py module that 'scrap' (grapql API) wzranked.com website
+"""
+
+
 def main(**kwargs):
 
     api = Wzranked()

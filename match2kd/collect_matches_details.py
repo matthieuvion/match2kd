@@ -21,6 +21,14 @@ import backoff
 
 from wzlight import Api
 
+"""
+Inside:
+-------
+
+Collect detailed match stats for a list of Warzone (resurgence) match ids , 
+using 'wzlight' Call of duty Warzone API async wrapper
+"""
+
 
 class EnhancedApi(Api):
     """Inherits wzlight Api Cls, add or enhance default methods"""
@@ -75,15 +83,17 @@ async def main(matchIds):
     async with httpx.AsyncClient() as httpxClient:
         batch_matches = await enh_api.GetMatchList(httpxClient, platform, matchIds)
 
-    with open(f"data/crawled/wzlight/matches_{str(start)}_{str(end)}.json", "w") as f:
+    with open(
+        f"data/crawled/wzlight/matches_solo{str(start)}_{str(end)}.json", "w"
+    ) as f:
         json.dump(batch_matches, f)
 
 
 if __name__ == "__main__":
 
-    filename = "matchIds.pickle"
-    start = 200
-    end = 250
+    filename = "matchIds_add_solo.pickle"
+    start = 0
+    end = 47
     with open(f"./data/{filename}", "rb") as f:
         matchIds = pickle.load(f)
     matchIds = [int(id) for id in matchIds][start:end]
