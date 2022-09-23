@@ -14,7 +14,7 @@ from match2kd import Wzranked
 Inside:
 -------
 
-Collect detailed match stats for a list of match ids, 
+Collect detailed match stats from a list of match ids, 
 using match2kd/wzranked.py module that 'scrap' (grapql API) wzranked.com website
 """
 
@@ -30,7 +30,7 @@ def main(**kwargs):
         matchIds = pickle.load(f)
 
     for i, matchId in enumerate(matchIds[start:end]):
-        time.sleep(random.uniform(1, 2.5))
+        time.sleep(random.uniform(1, 2))
         logging.info(f"getting matchInfo from match {matchId} ({i+1})")
         try:
             result = api.getMatch(matchId=str(matchId))
@@ -45,4 +45,4 @@ def main(**kwargs):
 
 
 if __name__ == "__main__":
-    main(filename="matchIds_add_solo.pickle", start=0, end=-1)
+    main(filename="matchIds_batch2.pickle", start=300, end=-1)

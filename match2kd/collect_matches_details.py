@@ -84,16 +84,17 @@ async def main(matchIds):
         batch_matches = await enh_api.GetMatchList(httpxClient, platform, matchIds)
 
     with open(
-        f"data/crawled/wzlight/matches_solo{str(start)}_{str(end)}.json", "w"
+        f"data/crawled/wzlight/matches_batch2_filtered_{str(start)}_{str(end)}.json",
+        "w",
     ) as f:
         json.dump(batch_matches, f)
 
 
 if __name__ == "__main__":
 
-    filename = "matchIds_add_solo.pickle"
-    start = 0
-    end = 47
+    filename = "matchIds_batch2_filtered.pickle"
+    start = 300
+    end = -1
     with open(f"./data/{filename}", "rb") as f:
         matchIds = pickle.load(f)
     matchIds = [int(id) for id in matchIds][start:end]
