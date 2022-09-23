@@ -12,6 +12,11 @@ wzlight = "^0.1.5"
 aiofiles = "^22.1.0"
 async-lru = "^1.0.3"
 backoff = "^2.1.2"
+plotly = "^5.10.0"
+ipywidgets = "^8.0.2"
+xgboost = "^1.6.2"
+scikit-learn = "^1.1.2"
+pyarrow = "^9.0.0"
 
 [tool.poetry.dev-dependencies]
 pytest = "^5.2"
