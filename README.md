@@ -5,18 +5,18 @@
 `match2kd` aims at overcoming COD API rate limits by estimating a match difficulty ("lobby k/d") from its features (players' metrics in a match : one call to the API) instead of requesting their whole history. <br> The core work (model notebook) is also readable in a better format through github.io, [there](https://matthieuvion-wzkd-home-xx.com).<br>
 
 
-The model is one of the 3 component of a more global work centered about COD API / metrics intelligence:<br>
+The model is one of the 3 component of a more global personal side project centered about COD API / metrics intelligence:<br>
 - [wzkd](https://github.com/matthieuvion/wzkd) : a Streamlit-based dashboard that collect, aggr. and visualize player's stats from Call of Duty Warzone (1), where we also deploy the model.<br>
 - [wzlight](https://github.com/matthieuvion/wzlight) (also on pypi) : a light, asynchronous python wrapper for 'Callof' API that was (also) used to build our dataset / power the dashboard.
 
 ### Under-the-hood pain points one tries to resolve
 ---
-- Calculation of an accurate "lobby k/d" (the main metric used by players to estimate a match difficulty) isn't possible without some form of special access / partnership with Activision  like cod tracker / wzranked stats tracker websites and/or a continuous matches / players profile data retrieval & storage.
-- One of the rate limit of the COD API (public access, not documented) is said to be 200 calls / 30 mn or so.
-- Our target, "Lobby KD" or more accuratly "avg players' kills/deaths ratio" is calculated as :<br> `Mean (n players' kills / deaths ratio, their x last recent matches)`
-- This metric is not provided by the API and is only retrievable by calling `n` (players) times `x` (matches) the API.
-- E.g. for a single match of 40 players (Rebirth mode) with, let's say and history of 30 matches per players, we would need *a minima* 40 (players) * 30 (matches) = **1200 calls** made to the API to calculate that metric
-- As a player we can often "feel" what's the difficulty of a match is and the API provide some in-game metrics (incomplete, though) that could be used to model game difficulty from player's metrics this match, without requesting their whole matches history.
+- Calculation of an accurate "lobby kd" (players' average kills/deaths ratio), the main metric used by players to estimate a match difficulty, isn't possible without some form of special access / partnership with Activision  like cod tracker / wzranked stats tracker websites and/or a continuous matches / players profile data retrieval, caching & storage.
+- One of the rate limit of the COD API (not documented) is said to be 200 calls / 30 mn or so.
+- Our target, "Lobby KD" or more accurately "avg players' kills/deaths ratio" is calculated as :<br> `Mean (n players' kills / deaths ratio, their x last matches)`
+- This metric **is not directly provided** by the API and is only retrievable by querying and aggregating `n` (player) times `x` (player recent matches) the API.
+- E.g. for a single match of 40 players with, let's say an history of 30 matches per player, we would need *a minima* 40 (players) * 30 (matches) = **1200 calls** to calculate that metric.
+- As a player we can often "feel" what is the difficulty of a match and the API provides post-match metrics (one call with a given match ID), with players performance metrics **this** match, that could be used to model game difficulty without querying all players profiles and performance in their last recent matches.
 
 ### Workflow - things that you might re-use in this repo
 ---
