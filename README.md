@@ -2,7 +2,9 @@
 [![MIT License](https://img.shields.io/apm/l/atomic-design-ui.svg?)](https://github.com/tterb/atomic-design-ui/blob/master/LICENSEs)
 [![made-with-python](https://img.shields.io/badge/Made%20with-Python-1f425f.svg)](https://www.python.org/)
 
-`match2kd` aims at overcoming COD API rate limits by estimating a match difficulty ("lobby k/d") from its features (players' metrics in a match : one call to the API) instead of requesting their whole history. <br> The core work (model notebook) is also readable in a better format through github.io, [there](https://matthieuvion-wzkd-home-xx.com).<br>
+`match2kd` aims at overcoming COD API rate limits by estimating a match difficulty ("lobby k/d") from its features (players' metrics in a match : one call to the API) instead of requesting their whole history (hundreds of calls) <br>
+Edit:<br>
+February 2023 : this work was made for Warzone 1 / Resurgence mode. Now Warzone 2 is out, things may vary much.
 
 
 The model is one of the 3 component of a more global personal side project centered about COD API / metrics intelligence:<br>
@@ -41,6 +43,7 @@ The model is one of the 3 component of a more global personal side project cente
 #### 2. Model
 - Final XGB model available (`match2kd/xgb_model_lobby_kd_2.json`), currently deployed in [Streamlit app](https://github.com/matthieuvion/wzkd)
 - Notebook with the workflow to train our model (`match2kd/model_v3.ipynb`)
+- Include my findings to improve model accuracy : features selection & engineering, as well as final aggregations made to retain enough information.
 
 ### Challenges
 ---
