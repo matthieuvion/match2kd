@@ -45,6 +45,19 @@ The model is one of the 3 component of a more global personal side project cente
 - Notebook with the workflow to train our model (`match2kd/model_v3.ipynb`)
 - Include my findings to improve model accuracy : features selection & engineering, as well as final aggregations made to retain enough information.
 
+#### 3. Best features to improve model accuracy 
+- See notebook for more details
+- Features selection : 20+ retained out of 150
+- Features creation : </br>
+**At dataset level** (all rows)
+- binning on match time : morning (1), noon (2), afternoon (3), evening (4), late evening (5)
+- normalization by time played (x/time) of players' kills, deaths, damage done, damage taken
+- normalization by kills (x/kills) : players' damage and headshot by kills </br>
+**At match level**, aggregation of players' stats per match
+- mean, std, median for a fixed set of features
+- pct_players with 0,5, 10 kills
+- pct_players with kills streak, double kills, with headshots
+
 ### Challenges
 ---
 - Custom dataset : the usual tedious work (scrapper, API wrapper) to gather our precious data.
