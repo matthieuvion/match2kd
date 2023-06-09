@@ -19,6 +19,7 @@ The model is one of the 3 component of a more global personal side project cente
 - This metric **is not directly provided** by the API and is only retrievable by querying and aggregating `n` (player) times `x` (player recent matches) the API.
 - E.g. for a single match of 40 players with, let's say an history of 30 matches per player, we would need *a minima* 40 (players) * 30 (matches) = **1200 calls** to calculate that metric.
 - As a player we can often "feel" what is the difficulty of a match and the API provides post-match metrics (one call with a given match ID), with players performance metrics **this** match, that could be used to model game difficulty without querying all players profiles and performance in their last recent matches.
+![our goal, diagram](https://github.com/matthieuvion/match2kd/blob/main/match2kd/data/call_picture.png?raw=true)
 
 ### Workflow - things that you might re-use in this repo
 ---
@@ -60,10 +61,11 @@ The model is one of the 3 component of a more global personal side project cente
 
 ### Challenges
 ---
+
 - Custom dataset : the usual tedious work (scrapper, API wrapper) to gather our precious data.
 - Skewed continuous target + 4 "types" of matches (team of 1,2,3 or 4 players) even if XGB is allegedly ok with that.
 - multi-level data : we want to predict "lobby kd" for a match. Picture every match as a table of +- 40 rows (players) with 150+ features (players metrics) and a single unique target (lobby kd). To train our model we will need to compress our data (one row with 150+ features per match -> our target). Will the model retain enough information ?
-- Documentation and examples quite scarce when dealing with multi-level data. Also specific models exist but won't extend on the matter :-p.
+- Ressources and examples quite scarce when dealing with multi-level data. Also specific models exist but won't extend on the matter :-p.
 
 ### Model Performance
 ---
