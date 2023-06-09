@@ -2,24 +2,24 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![made-with-python](https://img.shields.io/badge/Made%20with-Python-1f425f.svg)](https://www.python.org/)
 
-`match2kd` aims at overcoming COD API rate limits by estimating a match difficulty ("lobby k/d") from its features (players' metrics in a match : one call to the API) instead of requesting their whole history (hundreds of calls) <br>
-Edit:<br>
-February 2023 : this work was made for Warzone 1 / Resurgence mode. Now Warzone 2 is out, things may vary much.
+`match2kd` aims at overcoming "Callof" API rate limits by estimating a match difficulty ("lobby k/d") from its features (players' metrics in that match).<br>
+Instead of getting every player matches history (hundreds of calls) to calculate the score, a model predicts the difficulty with a single prior API call (a given match metrics).
 
 
 The model is one of the 3 component of a more global personal side project centered about COD API / metrics intelligence:<br>
 - [wzkd](https://github.com/matthieuvion/wzkd) : a Streamlit-based dashboard that collect, aggr. and visualize player's stats from Call of Duty Warzone (1), where we also deploy the model.<br>
-- [wzlight](https://github.com/matthieuvion/wzlight) (also on pypi) : a light, asynchronous python wrapper for 'Callof' API that was (also) used to build our dataset / power the dashboard.
+- [wzlight](https://github.com/matthieuvion/wzlight) (also on pypi) : a light, asynchronous python wrapper for 'Callof' API that was (also) used to build our dataset / power the dashboard.  
+Edit - June 2023. While our approach is still valid, Activision discontinuated its API with the launch of Warzone 2 and apparently has no plan to bring it back.
 
 ### Under-the-hood pain points one tries to resolve
 ---
+![our goal, diagram](https://github.com/matthieuvion/match2kd/blob/main/match2kd/data/call_picture.png?raw=true)
 - Calculation of an accurate "lobby kd" (players' average kills/deaths ratio), the main metric used by players to estimate a match difficulty, isn't possible without some form of special access / partnership with Activision  like cod tracker / wzranked stats tracker websites and/or a continuous matches / players profile data retrieval, caching & storage.
 - One of the rate limit of the COD API (not documented) is said to be 200 calls / 30 mn or so.
 - Our target, "Lobby KD" or more accurately "avg players' kills/deaths ratio" is calculated as :<br> `Mean (n players' kills / deaths ratio, their x last matches)`
 - This metric **is not directly provided** by the API and is only retrievable by querying and aggregating `n` (player) times `x` (player recent matches) the API.
 - E.g. for a single match of 40 players with, let's say an history of 30 matches per player, we would need *a minima* 40 (players) * 30 (matches) = **1200 calls** to calculate that metric.
 - As a player we can often "feel" what is the difficulty of a match and the API provides post-match metrics (one call with a given match ID), with players performance metrics **this** match, that could be used to model game difficulty without querying all players profiles and performance in their last recent matches.
-![our goal, diagram](https://github.com/matthieuvion/match2kd/blob/main/match2kd/data/call_picture.png?raw=true)
 
 ### Workflow - things that you might re-use in this repo
 ---
@@ -30,16 +30,10 @@ The model is one of the 3 component of a more global personal side project cente
     * `collect_matches_details.py` : an async wrapper to collect detailed match stats, based on my side project `wzlight` <br>
 
 #### 2. Dataset
-- Final custom dataset (`match2kd/dataset_warzone_kd_bigger.parquet.gzip`) with **55k rows** (**1170 unique matches** with +- 40 players), **152 features** (kills, deaths, pct time moving...) and the associated target (game difficulty / "lobby kd"). The data was collected around Sept 2022, from random COD Warzone players/matches (Rebirth mode only, solos to quads)
 
-| MatchID | Player | Map | Kills | *feat. 3* | *feat. 4* | *... feat. 152* | Target : "lobby k/d"|
-| --- | --- | --- | --- | :---: | :---: | :---: | :---: |
-| ***129999***|*1*|Rebirth|1|--|--|--|**1.12**|
-| *129999*|*...*|Rebirth|5|--|--|--|1.12|
-| *129999*|*40*|Rebirth|2|--|--|--|1.12|
-| ***125555***|*1*|FK.|0|--|--|--|**0.97**|
-| *125555*|*2*|FK.|8|--|--|--|0.97|
-|*x 1 k unique Ids*|...|...|...|...|...|...|...|
+![dataset overview](https://github.com/matthieuvion/match2kd/blob/main/match2kd/data/dataset_shape.png?raw=true)  
+Final custom dataset (`match2kd/dataset_warzone_kd_bigger.parquet.gzip`) with **55k rows** (**1170 unique matches** with +- 40 players), **152 features** (kills, deaths, pct time moving...) and the associated target (game difficulty / "lobby kd"). The data was collected around Sept 2022, from random COD Warzone players/matches (Rebirth mode only, solos to quads)
+
 
 #### 2. Model
 - Final XGB model available (`match2kd/xgb_model_lobby_kd_2.json`), currently deployed in [Streamlit app](https://github.com/matthieuvion/wzkd)
