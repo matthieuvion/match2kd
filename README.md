@@ -56,6 +56,7 @@ Final custom dataset (`match2kd/dataset_warzone_kd_bigger.parquet.gzip`) with **
 ### Challenges
 ---
 
+![compression / features creation at match level](https://github.com/matthieuvion/match2kd/blob/main/match2kd/data/compression_picture.png?raw=true)
 - Custom dataset : the usual tedious work (scrapper, API wrapper) to gather our precious data.
 - Skewed continuous target + 4 "types" of matches (team of 1,2,3 or 4 players) even if XGB is allegedly ok with that.
 - multi-level data : we want to predict "lobby kd" for a match. Picture every match as a table of +- 40 rows (players) with 150+ features (players metrics) and a single unique target (lobby kd). To train our model we will need to compress our data (one row with 150+ features per match -> our target). Will the model retain enough information ?
